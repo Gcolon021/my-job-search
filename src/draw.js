@@ -2,20 +2,19 @@ import React from "react";
 // import useTableTop from "./useTableTop";
 import { formatJobData } from "./utility";
 import * as d3 from "d3";
-import Tabletop from 'tabletop';
+import Tabletop from "tabletop";
 
 const Draw = () => {
-
   const [data, setData] = React.useState([]);
 
-  // const response = useTableTop(
-  //   "https://docs.google.com/spreadsheets/d/1izAg7Iwy4fiHr11OACKke8Obq6vPdgMx99p2zPCXeq8/edit?usp=sharing",
-  //   formatJobData
-  // );
+  //   const response = useTableTop(
+  //     "https://docs.google.com/spreadsheets/d/1izAg7Iwy4fiHr11OACKke8Obq6vPdgMx99p2zPCXeq8/edit?usp=sharing",
+  //     formatJobData
+  //   );
 
-  console.log(data);
+  //   console.log(data);
 
-  const d3Ref = React.useRef();
+  const d3Ref = React.useRef(null);
 
   var height = 500;
   var width = 500;
@@ -23,50 +22,67 @@ const Draw = () => {
   var color = d3.scaleOrdinal(d3.schemeCategory10);
 
   React.useEffect(() => {
-
-    await() => Tabletop.init({
-      key: "https://docs.google.com/spreadsheets/d/1izAg7Iwy4fiHr11OACKke8Obq6vPdgMx99p2zPCXeq8/edit?usp=sharing",
+    Tabletop.init({
+      key:
+        "https://docs.google.com/spreadsheets/d/1izAg7Iwy4fiHr11OACKke8Obq6vPdgMx99p2zPCXeq8/edit?usp=sharing",
       callback: (googleData) => {
         setData(formatJobData(googleData));
       },
       simpleSheet: true,
     });
 
-console.log(data)
+    console.log(data);
 
-// translates the coord system of g
-var g = d3
-  .select(d3Ref.current) // creates <svg></svg>
-  .append("svg")
-  .attr("width", width) // sets width of svg
-  .attr("height", height) // set height of svg
-  .append("g") // creates a <g> ele inside svg 
-  .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    // translates the coord system of g
+    var g = d3
+      .select(d3Ref.current) // creates <svg></svg>
+      .append("svg")
+      .attr("width", width) // sets width of svg
+      .attr("height", height) // set height of svg
+      .append("g") // creates a <g> ele inside svg
+      .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
-// defines the partition sizes in sunburst shape
-var partition = d3.partition().size([2 * Math.PI, radius]);
+    // defines the partition sizes in sunburst shape
+    var partition = d3.partition().size([2 * Math.PI, radius]);
 
-// uses root not and gives a size value to all of the objs
-var root = d3.hierarchy(data).sum(function (d) { return d.size })
+    // uses root not and gives a size value to all of the objs
+    var root = d3.hierarchy(data).sum(function (d) {
+      return d.size;
+    });
 
-partition(root);
-var arc = d3.arc()  // <-- 2
-  .startAngle(function (d) { return d.x0 })
-  .endAngle(function (d) { return d.x1 })
-  .innerRadius(function (d) { return d.y0 })
-  .outerRadius(function (d) { return d.y1 });
+    partition(root);
+    var arc = d3
+      .arc() // <-- 2
+      .startAngle(function (d) {
+        return d.x0;
+      })
+      .endAngle(function (d) {
+        return d.x1;
+      })
+      .innerRadius(function (d) {
+        return d.y0;
+      })
+      .outerRadius(function (d) {
+        return d.y1;
+      });
 
-g.selectAll('g')
-  .data(root.descendants())
-  .enter().append('g').attr("class", "node")
-  .append('path')
-  .attr('display', function (d) { return d.depth ? null : "none"; })
-  .attr('d', arc)
-  .style('stroke', '#fff')
-  .style("fill", function (d) { return color((d.children ? d : d.parent).data.name) });
-  }, []);
+    g.selectAll("g")
+      .data(root.descendants())
+      .enter()
+      .append("g")
+      .attr("class", "node")
+      .append("path")
+      .attr("display", function (d) {
+        return d.depth ? null : "none";
+      })
+      .attr("d", arc)
+      .style("stroke", "#fff")
+      .style("fill", function (d) {
+        return color((d.children ? d : d.parent).data.name);
+      });
+  }, [d3Ref.current, data]);
 
-return <div ref={d3Ref}></div>;
+  return <div ref={d3Ref}></div>;
 };
 
 export default Draw;
