@@ -8,69 +8,57 @@ export const CONSTANTS = {
   EMPLOYER_REJECTED: "EMPLOYER_REJECTED",
 };
 
+const filterData = (arr, filter) => {
+  const newArr = arr.filter((element) => filter === element.STANCE);
+  return newArr;
+};
+
 export const formatJobData = (googleData) => {
+  const noResponse = filterData(googleData, CONSTANTS.NO_RESPONSE);
+  const accepted = filterData(googleData, CONSTANTS.ACCEPTED);
+  const viewed = filterData(googleData, CONSTANTS.VIEWED);
+  const moreInfo = filterData(googleData, CONSTANTS.MORE_INFORMATION);
+  const interview = filterData(googleData, CONSTANTS.INTERVIEW);
+  const employeeRejected = filterData(googleData, CONSTANTS.EMPLOYEE_REJECTED);
+  const employerRejected = filterData(googleData, CONSTANTS.EMPLOYER_REJECTED);
+
   return {
     name: "Job Applications",
     children: [
       {
         name: "No Response",
-        children: [
-          googleData.filter(
-            (element) => CONSTANTS.NO_RESPONSE === element.STANCE
-          ),
-        ],
+        children: noResponse,
+        size: noResponse.length,
       },
       {
         name: "Accepted",
-        children: [
-          googleData.filter((element) => CONSTANTS.ACCEPTED === element.STANCE),
-        ],
+        children: accepted,
+        size: accepted.length,
       },
       {
         name: "viewed",
-        children: [
-          googleData.filter((element) => {
-            return CONSTANTS.VIEWED === element.STANCE ? element : null;
-          }),
-        ],
+        children: viewed,
+        size: viewed.length,
       },
       {
         name: "employee rejected",
-        children: [
-          googleData.filter((element) => {
-            return CONSTANTS.EMPLOYEE_REJECTED === element.STANCE
-              ? element
-              : null;
-          }),
-        ],
+        children: employeeRejected,
+        size: employeeRejected.length,
       },
       {
         name: "employer rejected",
-        children: [
-          googleData.filter((element) => {
-            return CONSTANTS.EMPLOYER_REJECTED === element.STANCE
-              ? element
-              : null;
-          }),
-        ],
+        children: employerRejected,
+        size: employerRejected.length,
       },
       {
         name: "more information requested",
-        children: [
-          googleData.filter((element) => {
-            return CONSTANTS.MORE_INFORMATION === element.STANCE
-              ? element
-              : null;
-          }),
-        ],
+        children: moreInfo,
+        size: moreInfo.length,
       },
       {
         name: "Interview Scheduled",
-        children: [
-          googleData.filter((element) => {
-            return CONSTANTS.INTERVIEW === element.STANCE ? element : null;
-          }),
-        ],
+        children: interview,
+        size: interview.length,
       },
     ],
   };
